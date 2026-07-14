@@ -19,7 +19,8 @@ const StudentsTab = ({
   selectedBatch,
   setSelectedBatch,
   selectedStudentIds,
-  setSelectedStudentIds
+  setSelectedStudentIds,
+  handleDeleteStudents
 }) => {
   const [idRange, setIdRange] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -158,9 +159,15 @@ const StudentsTab = ({
                 </button>
                 <button
                   onClick={handleStopSelectedTests}
-                  className="px-3 py-1.5 bg-red-650 hover:bg-red-750 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                  className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
                 >
                   Deactivate Selected
+                </button>
+                <button
+                  onClick={() => handleDeleteStudents(selectedStudentIds)}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  Delete Selected
                 </button>
               </>
             )}

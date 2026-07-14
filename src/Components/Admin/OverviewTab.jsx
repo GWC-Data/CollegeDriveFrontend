@@ -8,9 +8,11 @@ const OverviewTab = ({
   formatDateTime,
   showAlert,
   handleConfigToggle,
-  setSelectedStudentAnswers
+  setSelectedStudentAnswers,
+  handleDeleteStudents
 }) => {
   const [overviewFilter, setOverviewFilter] = useState(null); // null | 'registered' | 'submitted' | 'average' | 'high'
+  const [selectedFilteredIds, setSelectedFilteredIds] = useState([]);
   const [scoreRange, setScoreRange] = useState({ min: '', max: '', applied: false });
   const [localQuestions, setLocalQuestions] = useState(systemConfig.totalQuestionsToServe || 30);
   const [localDuration, setLocalDuration] = useState(systemConfig.testDuration || 15);
@@ -180,18 +182,35 @@ const OverviewTab = ({
                   </button>
                 )}
                 <button
-                  onClick={() => { setOverviewFilter(null); setScoreRange({ min: '', max: '', applied: false }); }}
+                  onClick={() => { setOverviewFilter(null); setScoreRange({ min: '', max: '', applied: false }); setSelectedFilteredIds([]); }}
                   className="text-xs text-slate-400 hover:text-slate-600 font-bold flex items-center gap-1 cursor-pointer ml-2"
                 >
                   ✕ Clear Filter
                 </button>
               </div>
+              
+              {selectedFilteredIds.length > 0 && (
+                <button
+                  onClick={() => handleDeleteStudents(selectedFilteredIds, () => setSelectedFilteredIds([]))}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold rounded-lg shadow-sm cursor-pointer ml-auto transition-colors"
+                >
+                  Delete Selected ({selectedFilteredIds.length})
+                </button>
+              )}
             </div>
 
             <div className="overflow-x-auto text-xs sm:text-sm">
               <table className="w-full text-left text-slate-600">
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider text-xs">
+                    <th className="py-2.5 px-3">
+                      <input 
+                        type="checkbox" 
+                        onChange={handleSelectAllFiltered}
+                        checked={filteredList.length > 0 && selectedFilteredIds.length === filteredList.length}
+                        className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                      />
+                    </th>
                     <th className="py-2.5 px-3">Student ID</th>
                     <th className="py-2.5 px-3">Name / USN</th>
                     <th className="py-2.5 px-3">Contact</th>
@@ -211,6 +230,14 @@ const OverviewTab = ({
                   ) : (
                     filteredList.map(stu => (
                       <tr key={stu._id} className="hover:bg-slate-50/50">
+                        <td className="py-3 px-3">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedFilteredIds.includes(stu._id)}
+                            onChange={() => handleSelectFiltered(stu._id)}
+                            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
+                          />
+                        </td>
                         <td className="py-3 px-3 font-mono font-bold text-indigo-600">{stu.studentId}</td>
                         <td className="py-3 px-3">
                           <div className="text-slate-900 font-semibold">{stu.name}</div>

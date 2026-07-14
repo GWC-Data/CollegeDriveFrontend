@@ -572,6 +572,33 @@ const Dashboard = ({ token, user, logout }) => {
     }
   };
 
+  const handleDeleteStudents = async (studentIds, callback) => {
+    showConfirm(`Are you sure you want to delete ${studentIds.length} student(s)? This action cannot be undone.`, async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/students`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ studentIds })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showAlert(data.message, 'Success', 'success');
+          fetchStudents();
+          fetchStats(); // Update stats in Overview
+          if (callback) callback();
+        } else {
+          showAlert(data.message || 'Failed to delete students', 'Error', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showAlert('Server error, please try again.', 'Error', 'error');
+      }
+    });
+  };
+
   const handleBulkDeleteQuestions = async () => {
     if (selectedQuestionIds.length === 0) return;
     showConfirm(`Delete ${selectedQuestionIds.length} selected question(s) permanently?`, async () => {
@@ -720,6 +747,7 @@ const Dashboard = ({ token, user, logout }) => {
             showAlert={showAlert}
             handleConfigToggle={handleConfigToggle}
             setSelectedStudentAnswers={setSelectedStudentAnswers}
+            handleDeleteStudents={handleDeleteStudents}
           />
         )}
 
@@ -744,6 +772,7 @@ const Dashboard = ({ token, user, logout }) => {
             setSelectedBatch={setSelectedBatch}
             selectedStudentIds={selectedStudentIds}
             setSelectedStudentIds={setSelectedStudentIds}
+            handleDeleteStudents={handleDeleteStudents}
           />
         )}
 
