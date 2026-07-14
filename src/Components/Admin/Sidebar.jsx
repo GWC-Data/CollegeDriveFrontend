@@ -14,6 +14,7 @@ const Sidebar = ({ activeTab, setActiveTab, isAdmin, logout, user }) => {
     ...(isAdmin ? [
       { id: 'overview', label: 'Overview', icon: SettingsIcon },
       { id: 'students', label: 'Students', icon: GraduationCapIcon },
+      { id: 'reports', label: 'Reports', icon: BookOpenIcon },
       { id: 'users', label: 'Staff Users', icon: UserIcon },
       { id: 'batches', label: 'Batches', icon: BookOpenIcon }
     ] : []),

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UserIcon, GraduationCapIcon, ClockIcon, BookOpenIcon, CheckCircleIcon, AlertCircleIcon, LogOutIcon } from '../Icons';
 import AlertDialog from '../AlertDialog';
 import API_BASE from '../../api';
+import jsPDF from 'jspdf';
 
 const Dashboard = ({ token, student, logout }) => {
   const [profile, setProfile] = useState(student);
@@ -148,6 +149,66 @@ const Dashboard = ({ token, student, logout }) => {
     }
     return () => clearInterval(timerRef.current);
   }, [examStarted, examSubmitted]);
+
+  const generateStudentPDF = () => {
+    if (!profile) return;
+    const doc = new jsPDF();
+    
+    // Load image
+    const img = new Image();
+    img.src = '/image.png';
+    img.onload = () => {
+      // Header Logo
+      doc.addImage(img, 'PNG', 14, 15, 40, 15);
+      
+      doc.setFontSize(14);
+      doc.setTextColor(30, 41, 59); // Slate-800
+      doc.text("Student Performance Report", 14, 38);
+      
+      doc.setLineWidth(0.5);
+      doc.setDrawColor(200, 200, 200);
+      doc.line(14, 43, 196, 43);
+    
+      // Student Details
+      doc.setFontSize(12);
+      doc.text(`Name: ${profile.name}`, 14, 53);
+      doc.text(`Student ID: ${profile.studentId}`, 14, 60);
+      doc.text(`USN: ${profile.usn}`, 14, 67);
+      doc.text(`College: ${profile.collegeName}`, 14, 74);
+      doc.text(`Email: ${profile.email}`, 100, 53);
+      doc.text(`Phone: ${profile.phone}`, 100, 60);
+      doc.text(`Batch: ${profile.batch || 'Unassigned'}`, 100, 67);
+      doc.text(`Set: ${profile.assignedSet}`, 100, 74);
+      
+      // Score & Status
+      doc.setFontSize(14);
+      doc.setTextColor(79, 70, 229);
+      doc.text("Examination Results", 14, 88);
+      
+      doc.setFontSize(12);
+      doc.setTextColor(30, 41, 59);
+      doc.text(`Status: Completed`, 14, 98);
+      
+      if (scoreReport) {
+        doc.text(`Final Score: ${scoreReport.score}`, 14, 105);
+        doc.text(`Test Started: ${new Date(profile.testStartedAt).toLocaleString()}`, 14, 112);
+        doc.text(`Test Submitted: ${new Date(profile.testSubmittedAt || Date.now()).toLocaleString()}`, 14, 119);
+        
+        // Calculate duration
+        const durationMs = new Date(profile.testSubmittedAt || Date.now()) - new Date(profile.testStartedAt);
+        const durationMins = Math.floor(durationMs / 60000);
+        const durationSecs = Math.floor((durationMs % 60000) / 1000);
+        doc.text(`Time Taken: ${durationMins}m ${durationSecs}s`, 14, 126);
+      }
+      
+      // Footer
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Report generated on: ${new Date().toLocaleString()}`, 14, 280);
+      
+      doc.save(`${profile.studentId}_Report.pdf`);
+    };
+  };
 
   const fetchProfile = async () => {
     try {
@@ -561,6 +622,21 @@ const Dashboard = ({ token, student, logout }) => {
                     <span className="block text-xs text-slate-500 font-bold mb-1">Total</span>
                     <span className="text-slate-900 font-mono font-bold text-lg">{scoreReport.totalQuestions}</span>
                   </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 mt-6 w-full max-w-sm mx-auto">
+                  <button
+                    onClick={generateStudentPDF}
+                    className="flex-1 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-colors cursor-pointer text-sm"
+                  >
+                    Download PDF Report
+                  </button>
+                  <button
+                    onClick={logout}
+                    className="flex-1 py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors cursor-pointer text-sm"
+                  >
+                    Logout Now
+                  </button>
                 </div>
               </div>
 

@@ -8,6 +8,7 @@ import StudentsTab from './StudentsTab';
 import BatchesTab from './BatchesTab';
 import StaffUsersTab from './AddUSer';
 import QuestionsTab from './AddQuestions';
+import ReportsTab from './ReportsTab';
 
 const Dashboard = ({ token, user, logout }) => {
   const isAdmin = user.role === 'Admin';
@@ -857,6 +858,10 @@ const Dashboard = ({ token, user, logout }) => {
             selectedQuestionIds={selectedQuestionIds}
             setSelectedQuestionIds={setSelectedQuestionIds}
           />
+        )}
+
+        {isAdmin && activeTab === 'reports' && (
+          <ReportsTab students={students} />
         )}
       </main>
 
