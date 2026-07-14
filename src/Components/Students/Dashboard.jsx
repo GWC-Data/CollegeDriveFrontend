@@ -371,7 +371,7 @@ const Dashboard = ({ token, student, logout }) => {
                 <ul className="list-disc pl-5 space-y-2">
                   <li>The exam consists of multiple-choice questions belonging to your assigned set (<span className="text-indigo-600 font-bold">Set {profile.assignedSet}</span>).</li>
                   <li>Questions and choices will be shuffled to ensure examination integrity.</li>
-                  <li>You have a total of <span className="text-indigo-600 font-bold">15 minutes (900 seconds)</span> to complete and submit the test.</li>
+                  <li>You have a total of <span className="text-indigo-600 font-bold">{Math.floor(timeLeft / 60)} minutes ({timeLeft} seconds)</span> to complete and submit the test.</li>
                   <li>Do not close or refresh this browser tab during the exam, as your progress may be lost.</li>
                   <li>The exam will automatically submit when the timer expires.</li>
                   <li>Your score and detailed scorecard will be displayed immediately upon submission.</li>
