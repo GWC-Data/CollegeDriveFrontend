@@ -111,36 +111,39 @@ const StudentsTab = ({
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
           <h2 className="text-lg font-bold text-slate-900 whitespace-nowrap">Registered Student Submissions</h2>
           
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 xl:gap-2 shrink-0 overflow-x-auto pb-1 lg:pb-0">
             {/* Name/ID Search */}
             <input
               type="text"
               placeholder="Search by Name or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="p-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-500 w-40 xl:w-48"
+              className="p-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-500 w-32 xl:w-40 min-w-[120px]"
             />
 
             {/* Bulk ID Range */}
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:inline ml-2">Bulk Select:</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:inline ml-1">Bulk Select:</span>
             <input
               type="text"
               placeholder="ID Range (e.g. 1-5)"
               value={idRange}
               onChange={(e) => setIdRange(e.target.value)}
-              className="p-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-500 w-32"
+              className="p-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-500 w-24 min-w-[90px]"
             />
             <button
               onClick={handleSelectRange}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all cursor-pointer"
+              className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
             >
               Select
             </button>
             <button
-              onClick={() => setSelectedStudentIds([])}
-              className="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer ml-1"
+              onClick={() => {
+                setSelectedStudentIds([]);
+                setSearchQuery('');
+              }}
+              className="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
             >
-              Clear
+              Clear All
             </button>
           </div>
 
