@@ -642,16 +642,18 @@ const Dashboard = ({ token, user, logout }) => {
     setStaffError('');
     setStaffSuccess('');
 
-    if (!staffForm.name.trim() || !staffForm.email.trim()) {
-      setStaffError('Please fill in name and email');
+    if (!staffForm.name.trim() || !staffForm.email.trim() || !staffForm.password.trim()) {
+      setStaffError('Please fill in all fields (name, email, password)');
+      return;
+    }
+
+    if (staffForm.password.length < 6) {
+      setStaffError('Password must be at least 6 characters');
       return;
     }
 
     try {
-      const payload = {
-        ...staffForm,
-        password: staffForm.password || Math.random().toString(36).slice(-8) + 'Gwc!'
-      };
+      const payload = { ...staffForm };
 
       const res = await fetch(`${API_BASE}/api/users`, {
         method: 'POST',

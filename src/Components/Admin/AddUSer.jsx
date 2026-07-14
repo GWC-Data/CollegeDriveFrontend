@@ -49,9 +49,16 @@ const StaffUsersTab = ({
             />
           </div>
 
-          <div className="p-3 bg-indigo-50/50 border border-indigo-100/60 rounded-xl text-xs text-indigo-700 font-medium leading-relaxed">
-            <span className="font-bold uppercase tracking-wider block mb-1">Passwordless Admin Access</span>
-            Any administrative email registered here is authorized to log in using <strong>just their email address</strong>. No password is required.
+          <div>
+            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Password</label>
+            <input
+              type="password"
+              value={staffForm.password}
+              onChange={(e) => setStaffForm({ ...staffForm, password: e.target.value })}
+              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-indigo-500 placeholder-slate-400 font-medium"
+              placeholder="Minimum 6 characters"
+              required
+            />
           </div>
 
           <div>
