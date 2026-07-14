@@ -22,6 +22,12 @@ const StudentsTab = ({
   setSelectedStudentIds
 }) => {
   const [idRange, setIdRange] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredStudents = students.filter(stu => 
+    stu.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    stu.studentId.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleSelectRange = () => {
     if (!idRange.includes('-')) {
@@ -105,8 +111,18 @@ const StudentsTab = ({
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
           <h2 className="text-lg font-bold text-slate-900 whitespace-nowrap">Registered Student Submissions</h2>
           
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:inline">Bulk Select:</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Name/ID Search */}
+            <input
+              type="text"
+              placeholder="Search by Name or ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="p-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-500 w-40 xl:w-48"
+            />
+
+            {/* Bulk ID Range */}
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden xl:inline ml-2">Bulk Select:</span>
             <input
               type="text"
               placeholder="ID Range (e.g. 1-5)"
@@ -146,7 +162,7 @@ const StudentsTab = ({
               </>
             )}
             <span className="text-xs font-semibold text-slate-500">
-              Selected {selectedStudentIds.length} of {students.length}
+              Selected {selectedStudentIds.length} of {filteredStudents.length}
             </span>
           </div>
         </div>
@@ -158,10 +174,10 @@ const StudentsTab = ({
                 <th className="py-3 px-2 text-center w-10">
                   <input
                     type="checkbox"
-                    checked={students.length > 0 && selectedStudentIds.length === students.length}
+                    checked={filteredStudents.length > 0 && selectedStudentIds.length === filteredStudents.length}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedStudentIds(students.map(s => s._id));
+                        setSelectedStudentIds(filteredStudents.map(s => s._id));
                       } else {
                         setSelectedStudentIds([]);
                       }
@@ -180,12 +196,12 @@ const StudentsTab = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {students.length === 0 ? (
+              {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="py-8 text-center text-slate-400">No students registered yet.</td>
+                  <td colSpan="9" className="py-8 text-center text-slate-400">No students found.</td>
                 </tr>
               ) : (
-                students.map(stu => {
+                filteredStudents.map(stu => {
                   const isSelected = selectedStudentIds.includes(stu._id);
                   return (
                     <tr key={stu._id} className={`hover:bg-slate-50/50 ${isSelected ? 'bg-indigo-50/20' : ''}`}>
