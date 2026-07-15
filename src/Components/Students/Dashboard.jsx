@@ -129,6 +129,7 @@ const Dashboard = ({ token, student, logout }) => {
   const [profile, setProfile] = useState(student);
   const [testActive, setTestActive] = useState(true);
   const [examStarted, setExamStarted] = useState(false);
+  const [totalQuestionsToServe, setTotalQuestionsToServe] = useState(null);
   const [examSubmitted, setExamSubmitted] = useState(profile.testSubmitted);
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -378,6 +379,9 @@ const Dashboard = ({ token, student, logout }) => {
         if (data.testDuration) {
           setTimeLeft(data.testDuration * 60);
         }
+        if (data.totalQuestionsToServe) {
+          setTotalQuestionsToServe(data.totalQuestionsToServe);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -595,7 +599,7 @@ const Dashboard = ({ token, student, logout }) => {
               <div className="space-y-4 text-slate-600 text-sm leading-relaxed mb-8">
                 <p>Welcome to the College Drive Aptitude Assessment. Please read the following instructions carefully before starting the exam:</p>
                 <ul className="list-disc pl-5 space-y-2">
-                  <li>The exam consists of multiple-choice questions belonging to your assigned set (<span className="text-indigo-600 font-bold">Set {profile.assignedSet}</span>).</li>
+                  <li>The exam consists of <span className="text-indigo-600 font-bold">{totalQuestionsToServe ? `${totalQuestionsToServe} questions` : 'multiple-choice questions'}</span> belonging to your assigned set (<span className="text-indigo-600 font-bold">Set {profile.assignedSet}</span>).</li>
                   <li>Questions and choices will be shuffled to ensure examination integrity.</li>
                   <li>You have a total of <span className="text-indigo-600 font-bold">{Math.floor(timeLeft / 60)} minutes ({timeLeft} seconds)</span> to complete and submit the test.</li>
                   <li>Do not close or refresh this browser tab during the exam, as your progress may be lost.</li>
