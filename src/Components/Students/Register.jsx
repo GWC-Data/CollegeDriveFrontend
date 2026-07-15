@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserIcon, PhoneIcon, MailIcon, IdIcon, GraduationCapIcon, CheckIcon } from '../Icons';
+import { UserIcon, PhoneIcon, MailIcon, IdIcon, GraduationCapIcon, CheckIcon, LockIcon, EyeIcon, EyeOffIcon } from '../Icons';
 import API_BASE from '../../api';
 
 const Register = ({ setView }) => {
@@ -8,7 +8,9 @@ const Register = ({ setView }) => {
     email: '',
     phone: '',
     usn: '',
-    collegeName: ''
+    collegeName: '',
+    password: '',
+    confirmPassword: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -16,6 +18,8 @@ const Register = ({ setView }) => {
   const [showModal, setShowModal] = useState(false);
   const [credentials, setCredentials] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
 
   const handleChange = (e) => {
     setFormData({
@@ -34,6 +38,8 @@ const Register = ({ setView }) => {
     
     if (!formData.usn.trim()) return 'College USN is required';
     if (!formData.collegeName.trim()) return 'College Name is required';
+    if (formData.password.length < 6) return 'Password must be at least 6 characters';
+    if (formData.password !== formData.confirmPassword) return 'Passwords do not match';
     
     return null;
   };
@@ -75,7 +81,7 @@ const Register = ({ setView }) => {
 
   const handleCopy = async () => {
     if (!credentials) return;
-    const text = `College Drive Credentials\n\nStudent ID: ${credentials.studentId}\nEmail: ${credentials.email}\nPassword: ${credentials.plainPassword}\n\nKeep this secure.`;
+    const text = `College Drive Credentials\n\nStudent ID: ${credentials.studentId}\nEmail: ${credentials.email}\n\nKeep this secure.`;
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(text);
@@ -209,6 +215,62 @@ const Register = ({ setView }) => {
             </div>
           </div>
 
+          {/* Password */}
+          <div>
+            <label htmlFor="regPassword" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Create Password</label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                <LockIcon className="w-5 h-5" />
+              </span>
+              <input
+                id="regPassword"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="new-password"
+                value={formData.password}
+                onChange={handleChange}
+                className="block w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium"
+                placeholder="Minimum 6 characters"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-indigo-600 transition-colors"
+              >
+                {showPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label htmlFor="regConfirmPassword" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Confirm Password</label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                <LockIcon className="w-5 h-5" />
+              </span>
+              <input
+                id="regConfirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                autoComplete="new-password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="block w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium"
+                placeholder="Confirm your password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-indigo-600 transition-colors"
+              >
+                {showConfirmPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -256,7 +318,7 @@ const Register = ({ setView }) => {
                 <CheckIcon className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900">Registration Successful!</h3>
-              <p className="text-slate-550 text-sm mt-1">Please save your credentials below to log in.</p>
+              <p className="text-slate-550 text-sm mt-1">You can now log in with the password you created.</p>
             </div>
 
             <div className="space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-200/80 text-left">
@@ -269,33 +331,9 @@ const Register = ({ setView }) => {
                 <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">Login Email</label>
                 <div className="text-slate-900 font-mono text-sm mt-0.5 font-medium">{credentials.email}</div>
               </div>
-              <hr className="border-slate-200" />
-              <div>
-                <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">Generated Password</label>
-                <div className="text-slate-900 font-mono text-sm mt-0.5 select-all bg-white px-2 py-1 rounded border border-slate-200 inline-block font-bold">
-                  {credentials.plainPassword}
-                </div>
-                <div className="text-[10px] text-slate-500 mt-1">
-                  (Please note down this password. It is generated securely and will not be displayed again.)
-                </div>
-              </div>
             </div>
 
             <div className="mt-6 flex flex-col gap-3">
-              <button
-                onClick={handleCopy}
-                className="w-full py-2.5 px-4 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium rounded-xl border border-slate-200 transition-colors flex items-center justify-center space-x-2 text-sm cursor-pointer"
-              >
-                {copied ? (
-                  <>
-                    <CheckIcon className="w-4 h-4 text-emerald-600" />
-                    <span className="text-emerald-600">Copied to Clipboard!</span>
-                  </>
-                ) : (
-                  <span>Copy Credentials</span>
-                )}
-              </button>
-
               <button
                 onClick={() => {
                   setShowModal(false);

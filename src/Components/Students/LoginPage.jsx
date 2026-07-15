@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MailIcon, LockIcon } from '../Icons';
+import { MailIcon, LockIcon, EyeIcon, EyeOffIcon } from '../Icons';
 import API_BASE from '../../api';
 
 const LoginPage = ({ setView, setStudentAuth, setAdminAuth }) => {
@@ -10,6 +10,7 @@ const LoginPage = ({ setView, setStudentAuth, setAdminAuth }) => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -112,13 +113,20 @@ const LoginPage = ({ setView, setStudentAuth, setAdminAuth }) => {
               </span>
               <input
                 id="loginPassword"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium"
+                className="block w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium"
                 placeholder="••••••••••••"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-indigo-600 transition-colors"
+              >
+                {showPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 
