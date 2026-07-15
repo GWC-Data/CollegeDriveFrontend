@@ -1,6 +1,4 @@
-// Central API base URL — reads from VITE_API_BASE_URL env variable.
-// In development this defaults to http://localhost:5000 (set in .env).
-// In production, set VITE_API_BASE_URL in .env.production or your hosting platform.
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+// Central API base URL pointing to the GCP Cloud Run backend
+const API_BASE = 'https://college-drive-api-462434048008.asia-south1.run.app';
 
 export default API_BASE;
