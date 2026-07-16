@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserIcon, PhoneIcon, MailIcon, IdIcon, GraduationCapIcon, CheckIcon, LockIcon, EyeIcon, EyeOffIcon } from '../Icons';
 import API_BASE from '../../api';
+import AlertDialog from '../AlertDialog';
 
 const Register = ({ setView }) => {
   const [formData, setFormData] = useState({
@@ -14,33 +15,36 @@ const Register = ({ setView }) => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [alertDialog, setAlertDialog] = useState({ isOpen: false, title: '', message: '', type: 'warning' });
+
+  const showAlert = (message, title = 'Validation Error', type = 'warning') => {
+    setAlertDialog({ isOpen: true, title, message, type });
+  };
   const [credentials, setCredentials] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [showPassword, setShowPassword] = useState(true);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError('');
   };
 
   const validateForm = () => {
     if (!formData.name.trim()) return 'Name is required';
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) return 'Provide a valid email address';
-    
+
     const cleanPhone = formData.phone.replace(/\D/g, '');
     if (cleanPhone.length < 10) return 'Phone number must be at least 10 digits';
-    
-    if (!formData.usn.trim()) return 'College USN is required';
+
+    if (!formData.usn.trim()) return 'Student ID (USN) is required';
     if (!formData.collegeName.trim()) return 'College Name is required';
     if (formData.password.length < 6) return 'Password must be at least 6 characters';
     if (formData.password !== formData.confirmPassword) return 'Passwords do not match';
-    
+
     return null;
   };
 
@@ -48,12 +52,11 @@ const Register = ({ setView }) => {
     e.preventDefault();
     const validationError = validateForm();
     if (validationError) {
-      setError(validationError);
+      showAlert(validationError, 'Check Your Input', 'warning');
       return;
     }
 
     setLoading(true);
-    setError('');
 
     try {
       const res = await fetch(`${API_BASE}/api/students/register`, {
@@ -73,7 +76,7 @@ const Register = ({ setView }) => {
       setCredentials(data.credentials);
       setShowModal(true);
     } catch (err) {
-      setError(err.message || 'Server error, please try again.');
+      showAlert(err.message || 'Server error, please try again.', 'Registration Failed', 'error');
     } finally {
       setLoading(false);
     }
@@ -108,11 +111,6 @@ const Register = ({ setView }) => {
           <p className="mt-1 text-xs text-slate-500">Join the drive and showcase your potential</p>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg text-left">
-            <span className="font-semibold">Error:</span> {error}
-          </div>
-        )}
 
         <form className="space-y-5" onSubmit={handleSubmit}>
           {/* Full Name */}
@@ -177,7 +175,7 @@ const Register = ({ setView }) => {
 
           {/* College USN */}
           <div>
-            <label htmlFor="regUsn" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">College USN</label>
+            <label htmlFor="regUsn" className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Student ID <span className="normal-case font-medium text-slate-400">(USN)</span></label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
                 <IdIcon className="w-5 h-5" />
@@ -209,7 +207,7 @@ const Register = ({ setView }) => {
                 value={formData.collegeName}
                 onChange={handleChange}
                 className="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium"
-                placeholder="Don Bosco Institute of Technology"
+                placeholder="Your College Name"
                 required
               />
             </div>
@@ -347,6 +345,13 @@ const Register = ({ setView }) => {
           </div>
         </div>
       )}
+      <AlertDialog
+        isOpen={alertDialog.isOpen}
+        title={alertDialog.title}
+        message={alertDialog.message}
+        type={alertDialog.type}
+        onClose={() => setAlertDialog({ ...alertDialog, isOpen: false })}
+      />
     </div>
   );
 };
